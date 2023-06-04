@@ -87,7 +87,7 @@ function add_admin_Better_stock_monitor_status_credential_form_page()
         "BetterStack Monitor Status Credential",
         "BetterStack Monitor Status Credential",
         "manage_options",
-        __FILE__,
+        "better_stock_monitor_status_credential",
         "crud_admin_better_stock_monitor_status_credential_form_page",
         "dashicons-wordpress"
     );
@@ -105,7 +105,7 @@ function crud_admin_better_stock_monitor_status_credential_form_page()
                 "INSERT INTO $table_name(pronounceable_names,api_key) VALUES(%s,%s)", [$pronounceable_names, $api_key]
             )
         );
-        echo "<script>location.replace('admin.php?page=betterstack%2Fbetterstack.php');</script>";
+        echo "<script>location.replace('admin.php?page=better_stock_monitor_status_credential');</script>";
     }
     if (isset($_POST["uptsubmit"])) {
         $id = $_POST["uptid"];
@@ -116,7 +116,7 @@ function crud_admin_better_stock_monitor_status_credential_form_page()
                 "UPDATE $table_name SET pronounceable_names=%s,api_key=%s WHERE id=%d", [$pronounceable_names, $api_key, $id],
             )
         );
-        echo "<script>location.replace('admin.php?page=betterstack%2Fbetterstack.php');</script>";
+        echo "<script>location.replace('admin.php?page=better_stock_monitor_status_credential');</script>";
     }
     ?>
     <div class="wrap">
@@ -151,7 +151,7 @@ function crud_admin_better_stock_monitor_status_credential_form_page()
                <tr>
                  <td>$print->pronounceable_names</td>
                  <td>$print->api_key</td>
-                 <td><a href='admin.php?page=betterstack%2Fbetterstack.php&upt=$print->id'><button type='button'>UPDATE</button></a></td>
+                 <td><a href='admin.php?page=better_stock_monitor_status_credential&upt=$print->id'><button type='button'>UPDATE</button></a></td>
                </tr>
              ";
             }
@@ -190,7 +190,7 @@ function crud_admin_better_stock_monitor_status_credential_form_page()
                      <input type='text' id='pronounceable_names' name='pronounceable_names' value='$pronounceable_names' placeholder='comma separated pronounceable names eg SaneChoice Website,SaneChoice POP3 etc' style='width: 100%;'>
                  </td>
                  <td><input type='text' id='api_key' name='api_key' value='$api_key'></td>
-                 <td><button id='uptsubmit' name='uptsubmit' type='submit'>UPDATE</button> <a href='admin.php?page=betterstack%2Fbetterstack.php'><button type='button'>CANCEL</button></a></td>
+                 <td><button id='uptsubmit' name='uptsubmit' type='submit'>UPDATE</button> <a href='admin.php?page=better_stock_monitor_status_credential'><button type='button'>CANCEL</button></a></td>
                </tr>
              </form>
            </tbody>
