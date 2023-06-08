@@ -339,3 +339,118 @@ add_action(
     "wp_ajax_nopriv_betteruptime_monitor_status_refresh",
     "betteruptime_monitor_status_ajax"
 );
+
+function betteruptime_create_new_incident_refresh()
+{
+    ?>
+    <script>
+        jQuery(document).ready(function ($) {
+            $('form#betteruptime_new_incident_form').on('submit', function (e) {
+                e.preventDefault();
+
+                let requester_email = $('#requester_email').val();
+                let name = $('#name').val();
+                let summary = $('#summary').val();
+                let description = $('#description').val();
+
+                if (!requester_email) {
+                    alert('Requester email is mandatory');
+                }
+
+                if (!name) {
+                    alert('Name is mandatory');
+                }
+
+                if (!summary) {
+                    alert('Summary is mandatory');
+                }
+
+                if (!description) {
+                    alert('Description is mandatory');
+                }
+
+                if (!requester_email || !name || !summary || !description) {
+                    return;
+                }
+
+                $.ajax({
+                    url: '<?= admin_url("admin-ajax.php") ?>',
+                    type: 'post',
+                    data: {
+                        action: 'betteruptime_create_new_incident_refresh',
+                        requester_email: requester_email,
+                        name: name,
+                        summary: summary,
+                        description: description,
+                    },
+                    success: function (data) {
+                        if (data === 'success') {
+                            window.location.href = 'https://www.sanechoice.cloud/incsuccess/';
+                        } else {
+                            window.location.href = 'https://www.sanechoice.cloud/incfailure/';
+                        }
+                    },
+                    error: function () {
+                        window.location.href = 'https://www.sanechoice.cloud/incfailure/';
+                    }
+                });
+            });
+        });
+    </script>
+    <?php
+}
+
+add_action("wp_footer", "betteruptime_create_new_incident_refresh");
+
+function betteruptime_create_new_incident_ajax()
+{
+    global $wpdb;
+    $table_name = $wpdb->prefix . "better_stock_monitor_status_credentials";
+    $result = $wpdb->get_results("SELECT * FROM $table_name limit 1");
+    foreach ($result as $print) {
+        $api_key = $print->api_key;
+    }
+
+    if (!isset($api_key)) {
+        echo 'failed';
+        wp_die();
+    }
+
+    $url = "https://uptime.betterstack.com/api/v2/incidents";
+
+    $postParameter = [
+        'requester_email' => $_POST['requester_email'] ?? '',
+        'name' => $_POST['name'] ?? '',
+        'summary' => $_POST['summary'] ?? '',
+        'description' => $_POST['description'] ?? '',
+    ];
+
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($postParameter));
+    curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type:application/json'));
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, [
+        "Authorization: Bearer $api_key",
+        "Content-Type: application/json",
+    ]);
+
+    curl_exec($ch);
+    if (curl_errno($ch)) {
+        echo "failed";
+        wp_die();
+    }
+    curl_close($ch);
+
+    echo "success";
+    wp_die();
+}
+
+add_action(
+    "wp_ajax_betteruptime_create_new_incident_refresh",
+    "betteruptime_create_new_incident_ajax"
+);
+add_action(
+    "wp_ajax_nopriv_betteruptime_create_new_incident_refresh",
+    "betteruptime_create_new_incident_ajax"
+);
