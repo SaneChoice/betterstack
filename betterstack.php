@@ -423,6 +423,11 @@ function betteruptime_create_new_incident_ajax()
         'name' => $_POST['name'] ?? '',
         'summary' => $_POST['summary'] ?? '',
         'description' => $_POST['description'] ?? '',
+        'call' => false,
+        'sms' => true,
+        'email' => true,
+        'push' => true,
+        'team_wait' => 60,//will wait 60s
     ];
 
     $ch = curl_init();
