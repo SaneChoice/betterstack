@@ -323,8 +323,8 @@ function betteruptime_incident_report_enqueue()
 {
     wp_enqueue_script("jquery");
 
-    wp_register_style('betteruptime_incident_report_enqueue_style', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css');
-    wp_enqueue_style('betteruptime_incident_report_enqueue_style');
+    wp_register_style('betteruptime_incident_report_style', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css');
+    wp_enqueue_style('betteruptime_incident_report_style');
 
     wp_register_script('betteruptime_incident_report_script', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js');
     wp_enqueue_script('betteruptime_incident_report_script');
