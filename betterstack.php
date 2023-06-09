@@ -58,16 +58,22 @@ function wp_php_version_check()
     }
 }
 
-register_activation_hook(__FILE__, "better_stock_monitor_status_table");
-function better_stock_monitor_status_table()
+register_activation_hook(__FILE__, "better_stack_monitor_status_table");
+function better_stack_monitor_status_table()
 {
     global $wpdb;
     $charset_collate = $wpdb->get_charset_collate();
-    $table_name = $wpdb->prefix . "better_stock_monitor_status_credentials";
+    $table_name = $wpdb->prefix . "better_stack_monitor_status_credentials";
     $sql = "CREATE TABLE `$table_name` (
    `id` int(11) NOT NULL AUTO_INCREMENT,
    `pronounceable_names` text DEFAULT '',
    `api_key` varchar(220) DEFAULT '',
+   `is_call_enabled` tinyint(4) UNSIGNED DEFAULT 0,
+   `is_sms_enabled` tinyint(4) UNSIGNED DEFAULT 0,
+   `is_email_enabled` tinyint(4) UNSIGNED DEFAULT 0,
+   `is_push_enabled` tinyint(4) UNSIGNED DEFAULT 0,
+   `team_wait` int(11) DEFAULT 0,
+   `policy_id` varchar(220) DEFAULT '',
    PRIMARY KEY(id)
    ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
    ";
@@ -96,13 +102,19 @@ function add_admin_Better_stock_monitor_status_credential_form_page()
 function crud_admin_better_stock_monitor_status_credential_form_page()
 {
     global $wpdb;
-    $table_name = $wpdb->prefix . "better_stock_monitor_status_credentials";
+    $table_name = $wpdb->prefix . "better_stack_monitor_status_credentials";
     if (isset($_POST["newsubmit"])) {
         $pronounceable_names = $_POST["pronounceable_names"];
         $api_key = $_POST["api_key"];
+        $is_call_enabled = isset($_POST["is_call_enabled"]) ? 1 : 0;
+        $is_sms_enabled = isset($_POST["is_sms_enabled"]) ? 1 : 0;
+        $is_email_enabled = isset($_POST["is_email_enabled"]) ? 1 : 0;
+        $is_push_enabled = isset($_POST["is_push_enabled"]) ? 1 : 0;
+        $team_wait = empty($_POST["team_wait"]) ? 60 : $_POST["team_wait"];
+        $policy_id = $_POST["policy_id"];
         $wpdb->query(
             $wpdb->prepare(
-                "INSERT INTO $table_name(pronounceable_names,api_key) VALUES(%s,%s)", [$pronounceable_names, $api_key]
+                "INSERT INTO $table_name(pronounceable_names,api_key,is_call_enabled,is_sms_enabled,is_email_enabled,is_push_enabled,team_wait,policy_id) VALUES(%s,%s,%d,%d,%d,%d,%d,%s)", [$pronounceable_names, $api_key, $is_call_enabled, $is_sms_enabled, $is_email_enabled, $is_push_enabled, $team_wait, $policy_id]
             )
         );
         echo "<script>location.replace('admin.php?page=better_stock_monitor_status_credential');</script>";
@@ -111,53 +123,113 @@ function crud_admin_better_stock_monitor_status_credential_form_page()
         $id = $_POST["uptid"];
         $pronounceable_names = $_POST["pronounceable_names"];
         $api_key = $_POST["api_key"];
+        $is_call_enabled = isset($_POST["is_call_enabled"]) ? 1 : 0;
+        $is_sms_enabled = isset($_POST["is_sms_enabled"]) ? 1 : 0;
+        $is_email_enabled = isset($_POST["is_email_enabled"]) ? 1 : 0;
+        $is_push_enabled = isset($_POST["is_push_enabled"]) ? 1 : 0;
+        $team_wait = empty($_POST["team_wait"]) ? 60 : $_POST["team_wait"];
+        $policy_id = $_POST["policy_id"];
         $wpdb->query(
             $wpdb->prepare(
-                "UPDATE $table_name SET pronounceable_names=%s,api_key=%s WHERE id=%d", [$pronounceable_names, $api_key, $id],
+                "UPDATE $table_name SET pronounceable_names=%s,api_key=%s,is_call_enabled=%d,is_sms_enabled=%d,is_email_enabled=%d,is_push_enabled=%d,team_wait=%d,policy_id=%s WHERE id=%d", [$pronounceable_names, $api_key, $is_call_enabled, $is_sms_enabled, $is_email_enabled, $is_push_enabled, $team_wait, $policy_id, $id],
             )
         );
         echo "<script>location.replace('admin.php?page=better_stock_monitor_status_credential');</script>";
     }
     ?>
-    <div class="wrap">
-        <h2>BetterStack Monitor Status Credential</h2>
-        <table class="wp-list-table widefat striped">
-            <thead>
-            <tr>
-                <th width="60%">Pronounceable Names</th>
-                <th width="25%">API Key</th>
-                <th width="15%">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-            <?php
-            $result = $wpdb->get_results("SELECT * FROM $table_name");
-            if (empty($result)) { ?>
-                <form action="" method="post">
+    <style>
+        .form-group, .checkbox {
+            padding: 5px;
+        }
+    </style>
+    <div class="container">
+        <h2>BetterStack Credentials</h2>
+        <?php
+        $result = $wpdb->get_results("SELECT * FROM $table_name");
+        if (empty($result)) { ?>
+            <form action="" method="post">
+                <h3>BetterStack API Credential</h3>
+                <div class="form-group">
+                    <label for="api_key" class="fw-bold">API key:</label>
+                    <input type="text" class="form-control" id="api_key" placeholder="Enter api key" name="api_key">
+                </div>
+                <hr/>
+                <h3>BetterStack Monitor Status Credential</h3>
+                <div class="form-group">
+                    <label for="pronounceable_names" class="fw-bold">Pronounceable names:</label>
+                    <input type="text" class="form-control" id="pronounceable_names"
+                           placeholder="comma separated pronounceable names eg SaneChoice Website,SaneChoice POP3 etc"
+                           name="pronounceable_names">
+                </div>
+                <hr/>
+                <h3>BetterStack Incident Report Credential</h3>
+                <div class="checkbox">
+                    <label class="fw-bold"><input type="checkbox" name="is_call_enabled"> Should we call the on-call
+                        person?</label>
+                </div>
+                <div class="checkbox">
+                    <label class="fw-bold"><input type="checkbox" name="is_sms_enabled"> Should we send an SMS to the
+                        on-call
+                        person?</label>
+                </div>
+                <div class="checkbox">
+                    <label class="fw-bold"><input type="checkbox" name="is_email_enabled"> Should we send an email to
+                        the on-call
+                        person?</label>
+                </div>
+                <div class="checkbox">
+                    <label class="fw-bold"><input type="checkbox" name="is_push_enabled"> Should we send a push
+                        notification to the on-call person?</label>
+                </div>
+                <div class="form-group">
+                    <label for="team_wait" class="fw-bold">How long to wait before escalating the incident:</label>
+                    <input type="number" step="1" class="form-control" id="team_wait"
+                           placeholder="Enter waiting time seconds" name="team_wait">
+                </div>
+                <div class="form-group">
+                    <label for="policy_id" class="fw-bold">The ID of the escalation policy:</label>
+                    <input type="text" class="form-control" id="policy_id" placeholder="keep blank to use default"
+                           name="policy_id">
+                </div>
+                <div class="form-group">
+                    <button type="submit" id="newsubmit" name="newsubmit" class="btn btn-default btn-success">Insert
+                    </button>
+                </div>
+            </form>
+        <?php } elseif (!isset($_GET["upt"])) { ?>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>API Key</th>
+                    <th>Pronounceable Names</th>
+                    <th>Call</th>
+                    <th>SMS</th>
+                    <th>Email</th>
+                    <th>Push</th>
+                    <th>Team wait</th>
+                    <th>Policy id</th>
+                    <th>Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                <?php foreach ($result as $print) { ?>
                     <tr>
-                        <td><input type="text" id="pronounceable_names" name="pronounceable_names"
-                                   placeholder="comma separated pronounceable names eg SaneChoice Website,SaneChoice POP3 etc"
-                                   style='width: 100%;'>
-                        </td>
-                        <td><input type="text" id="api_key" name="api_key"></td>
-                        <td>
-                            <button id="newsubmit" name="newsubmit" type="submit">INSERT</button>
-                        </td>
+                        <td><?= $print->api_key ?></td>
+                        <td><?= $print->pronounceable_names ?></td>
+                        <td><?= $print->is_call_enabled ? 'Yes' : 'No' ?></td>
+                        <td><?= $print->is_sms_enabled ? 'Yes' : 'No' ?></td>
+                        <td><?= $print->is_email_enabled ? 'Yes' : 'No' ?></td>
+                        <td><?= $print->is_push_enabled ? 'Yes' : 'No' ?></td>
+                        <td><?= $print->team_wait ?></td>
+                        <td><?= $print->policy_id ?></td>
+                        <td><a href='admin.php?page=better_stock_monitor_status_credential&upt=<?= $print->id ?>'>
+                                <button type='button' class='btn btn-primary'>UPDATE</button>
+                            </a></td>
                     </tr>
-                </form>
-            <?php }
-            foreach ($result as $print) {
-                echo "
-               <tr>
-                 <td>$print->pronounceable_names</td>
-                 <td>$print->api_key</td>
-                 <td><a href='admin.php?page=better_stock_monitor_status_credential&upt=$print->id'><button type='button'>UPDATE</button></a></td>
-               </tr>
-             ";
-            }
-            ?>
-            </tbody>
-        </table>
+                <?php } ?>
+                </tbody>
+            </table>
+        <?php } ?>
         <br>
         <br>
         <?php if (isset($_GET["upt"])) {
@@ -171,40 +243,99 @@ function crud_admin_better_stock_monitor_status_credential_form_page()
                 $id = $print->id;
                 $pronounceable_names = $print->pronounceable_names;
                 $api_key = $print->api_key;
+                $is_call_enabled = $print->is_call_enabled ? 'checked' : '';
+                $is_sms_enabled = $print->is_sms_enabled ? 'checked' : '';
+                $is_email_enabled = $print->is_email_enabled ? 'checked' : '';
+                $is_push_enabled = $print->is_push_enabled ? 'checked' : '';
+                $team_wait = $print->team_wait;
+                $policy_id = $print->policy_id;
             }
-            if (isset($id) && isset($pronounceable_names) && isset($api_key)) {
-                echo "
-         <table class='wp-list-table widefat striped'>
-           <thead>
-             <tr>
-               <th width='60%'>Pronounceable Names</th>
-               <th width='25%'>API key</th>
-               <th width='15%'>Actions</th>
-             </tr>
-           </thead>
-           <tbody>
-             <form action='' method='post'>
-               <tr>
-                 <td>
-                     <input type='hidden' id='uptid' name='uptid' value='$id'>
-                     <input type='text' id='pronounceable_names' name='pronounceable_names' value='$pronounceable_names' placeholder='comma separated pronounceable names eg SaneChoice Website,SaneChoice POP3 etc' style='width: 100%;'>
-                 </td>
-                 <td><input type='text' id='api_key' name='api_key' value='$api_key'></td>
-                 <td><button id='uptsubmit' name='uptsubmit' type='submit'>UPDATE</button> <a href='admin.php?page=better_stock_monitor_status_credential'><button type='button'>CANCEL</button></a></td>
-               </tr>
-             </form>
-           </tbody>
-         </table>";
+            if (isset($id) && isset($pronounceable_names) && isset($api_key)) { ?>
+                <form action="" method="post">
+                    <h3>BetterStack API Credential</h3>
+                    <div class="form-group">
+                        <label for="api_key" class="fw-bold">API key:</label>
+                        <input type="text" class="form-control" id="api_key" placeholder="Enter api key" name="api_key"
+                               value="<?= $api_key ?>">
+                    </div>
+                    <hr/>
+                    <h3>BetterStack Monitor Status Credential</h3>
+                    <div class="form-group">
+                        <label for="pronounceable_names" class="fw-bold">Pronounceable names:</label>
+                        <input type="text" class="form-control" id="pronounceable_names"
+                               placeholder="comma separated pronounceable names eg SaneChoice Website,SaneChoice POP3 etc"
+                               name="pronounceable_names" value="<?= $pronounceable_names ?>">
+                    </div>
+                    <hr/>
+                    <h3>BetterStack Incident Report Credential</h3>
+                    <div class="checkbox">
+                        <label class="fw-bold"><input type="checkbox" name="is_call_enabled" <?= $is_call_enabled ?>>
+                            Should
+                            we call the on-call
+                            person?</label>
+                    </div>
+                    <div class="checkbox">
+                        <label class="fw-bold"><input type="checkbox" name="is_sms_enabled" <?= $is_sms_enabled ?>>
+                            Should
+                            we send an SMS to the
+                            on-call
+                            person?</label>
+                    </div>
+                    <div class="checkbox">
+                        <label class="fw-bold"><input type="checkbox" name="is_email_enabled" <?= $is_email_enabled ?>>
+                            Should we send an email to
+                            the on-call
+                            person?</label>
+                    </div>
+                    <div class="checkbox">
+                        <label class="fw-bold"><input type="checkbox" name="is_push_enabled" <?= $is_push_enabled ?>>
+                            Should
+                            we send a push
+                            notification to the on-call person?</label>
+                    </div>
+                    <div class="form-group">
+                        <label for="team_wait" class="fw-bold">How long to wait before escalating the incident:</label>
+                        <input type="number" step="1" class="form-control" id="team_wait"
+                               placeholder="Enter waiting time seconds" name="team_wait" value="<?= $team_wait ?>">
+                    </div>
+                    <div class="form-group">
+                        <label for="policy_id" class="fw-bold">The ID of the escalation policy:</label>
+                        <input type="text" class="form-control" id="policy_id" placeholder="keep blank to use default"
+                               name="policy_id" value="<?= $policy_id ?>">
+                    </div>
+                    <div class="form-group">
+                        <input type='hidden' id='uptid' name='uptid' value='<?= $id ?>'>
+                        <button type="submit" id="uptsubmit" name="uptsubmit" class="btn btn-default btn-success">UPDATE
+                        </button>
+                        <a href='admin.php?page=better_stock_monitor_status_credential'>
+                            <button type='button' class="btn btn-primary">CANCEL</button>
+                        </a>
+                    </div>
+                </form>
+                <?php
             }
         } ?>
     </div>
     <?php
 }
 
+function betteruptime_incident_report_enqueue()
+{
+    wp_enqueue_script("jquery");
+
+    wp_register_style('betteruptime_incident_report_enqueue_style', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css');
+    wp_enqueue_style('betteruptime_incident_report_enqueue_style');
+
+    wp_register_script('betteruptime_incident_report_script', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js');
+    wp_enqueue_script('betteruptime_incident_report_script');
+}
+
+add_action("admin_enqueue_scripts", "betteruptime_incident_report_enqueue");
+
 function betteruptime_api_request()
 {
     global $wpdb;
-    $table_name = $wpdb->prefix . "better_stock_monitor_status_credentials";
+    $table_name = $wpdb->prefix . "better_stack_monitor_status_credentials";
     $result = $wpdb->get_results("SELECT * FROM $table_name limit 1");
     foreach ($result as $print) {
         $pronounceable_names = array_map(
@@ -405,7 +536,7 @@ add_action("wp_footer", "betteruptime_create_new_incident_refresh");
 function betteruptime_create_new_incident_ajax()
 {
     global $wpdb;
-    $table_name = $wpdb->prefix . "better_stock_monitor_status_credentials";
+    $table_name = $wpdb->prefix . "better_stack_monitor_status_credentials";
     $result = $wpdb->get_results("SELECT * FROM $table_name limit 1");
     foreach ($result as $print) {
         $api_key = $print->api_key;
