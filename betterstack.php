@@ -138,62 +138,137 @@ function crud_admin_better_stock_monitor_status_credential_form_page()
     }
     ?>
     <style>
-        .form-group, .checkbox {
-            padding: 5px;
+        .betterstack-container input[type=text], .betterstack-container input[type=number], .betterstack-container select {
+            width: 100% !important;
+            padding: 12px 20px !important;
+            margin: 8px 0 !important;
+            display: inline-block !important;
+            border: 1px solid #ccc !important;
+            border-radius: 4px !important;
+            box-sizing: border-box !important;
+        }
+
+        .betterstack-container label {
+            font-weight: bold !important;
+            font-size: 15px !important;
+        }
+
+        .betterstack-container input[type=submit] {
+            width: 100% !important;
+            background-color: #4CAF50 !important;
+            color: white !important;
+            padding: 14px 20px !important;
+            margin: 8px 0 !important;
+            border: none !important;
+            border-radius: 4px !important;
+            cursor: pointer !important;
+        }
+
+        .betterstack-container .cancel-button, .betterstack-container .update-button {
+            width: 100% !important;
+            background-color: #4581ef !important;
+            color: white !important;
+            padding: 14px 20px !important;
+            margin: 8px 0 !important;
+            border: none !important;
+            border-radius: 4px !important;
+            cursor: pointer !important;
+        }
+
+        .betterstack-container input[type=submit]:hover {
+            background-color: #45a049 !important;
+        }
+
+        .betterstack-container {
+            border-radius: 5px !important;
+            background-color: #f2f2f2 !important;
+            padding: 20px !important;
+        }
+
+        .betterstack-container .betterstack-form-group {
+            width: 100% !important;
+            padding: 5px !important;
+        }
+
+        .betterstack-container .table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        .betterstack-container .table td, .betterstack-container .table th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        .betterstack-container .table tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .betterstack-container .table tr:hover {
+            background-color: #ddd;
+        }
+
+        .betterstack-container .table th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: left;
+            background-color: #04AA6D;
+            color: white;
         }
     </style>
-    <div class="container">
-        <h2>BetterStack Credentials</h2>
+    <div class="betterstack-container">
+        <h1>BetterStack Credentials</h1>
         <?php
         $result = $wpdb->get_results("SELECT * FROM $table_name");
         if (empty($result)) { ?>
+            <br>
+            <br>
             <form action="" method="post">
                 <h3>BetterStack API Credential</h3>
-                <div class="form-group">
-                    <label for="api_key" class="fw-bold">API key:</label>
-                    <input type="text" class="form-control" id="api_key" placeholder="Enter api key" name="api_key">
+                <div class="betterstack-form-group">
+                    <label for="api_key">API key:</label>
+                    <input type="text" id="api_key" placeholder="Enter api key" name="api_key">
                 </div>
                 <hr/>
                 <h3>BetterStack Monitor Status Credential</h3>
-                <div class="form-group">
-                    <label for="pronounceable_names" class="fw-bold">Pronounceable names:</label>
-                    <input type="text" class="form-control" id="pronounceable_names"
+                <div class="betterstack-form-group">
+                    <label for="pronounceable_names">Pronounceable names:</label>
+                    <input type="text" id="pronounceable_names"
                            placeholder="comma separated pronounceable names eg SaneChoice Website,SaneChoice POP3 etc"
                            name="pronounceable_names">
                 </div>
                 <hr/>
                 <h3>BetterStack Incident Report Credential</h3>
-                <div class="checkbox">
-                    <label class="fw-bold"><input type="checkbox" name="is_call_enabled"> Should we call the on-call
+                <div class="betterstack-form-group">
+                    <label><input type="checkbox" name="is_call_enabled"> Should we call the on-call
                         person?</label>
                 </div>
-                <div class="checkbox">
-                    <label class="fw-bold"><input type="checkbox" name="is_sms_enabled"> Should we send an SMS to the
+                <div class="betterstack-form-group">
+                    <label><input type="checkbox" name="is_sms_enabled"> Should we send an SMS to the
                         on-call
                         person?</label>
                 </div>
-                <div class="checkbox">
-                    <label class="fw-bold"><input type="checkbox" name="is_email_enabled"> Should we send an email to
+                <div class="betterstack-form-group">
+                    <label><input type="checkbox" name="is_email_enabled"> Should we send an email to
                         the on-call
                         person?</label>
                 </div>
-                <div class="checkbox">
-                    <label class="fw-bold"><input type="checkbox" name="is_push_enabled"> Should we send a push
+                <div class="betterstack-form-group">
+                    <label><input type="checkbox" name="is_push_enabled"> Should we send a push
                         notification to the on-call person?</label>
                 </div>
-                <div class="form-group">
-                    <label for="team_wait" class="fw-bold">How long to wait before escalating the incident:</label>
+                <div class="betterstack-form-group">
+                    <label for="team_wait">How long to wait before escalating the incident:</label>
                     <input type="number" step="1" class="form-control" id="team_wait"
                            placeholder="Enter waiting time seconds" name="team_wait">
                 </div>
-                <div class="form-group">
-                    <label for="policy_id" class="fw-bold">The ID of the escalation policy:</label>
+                <div class="betterstack-form-group">
+                    <label for="policy_id">The ID of the escalation policy:</label>
                     <input type="text" class="form-control" id="policy_id" placeholder="keep blank to use default"
                            name="policy_id">
                 </div>
-                <div class="form-group">
-                    <button type="submit" id="newsubmit" name="newsubmit" class="btn btn-default btn-success">Insert
-                    </button>
+                <div class="betterstack-form-group">
+                    <input type="submit" id="newsubmit" name="newsubmit" value="Insert">
                 </div>
             </form>
         <?php } elseif (!isset($_GET["upt"])) { ?>
@@ -223,7 +298,7 @@ function crud_admin_better_stock_monitor_status_credential_form_page()
                         <td><?= $print->team_wait ?></td>
                         <td><?= $print->policy_id ?></td>
                         <td><a href='admin.php?page=better_stock_monitor_status_credential&upt=<?= $print->id ?>'>
-                                <button type='button' class='btn btn-primary'>UPDATE</button>
+                                <button type='button' class='update-button'>UPDATE</button>
                             </a></td>
                     </tr>
                 <?php } ?>
@@ -253,62 +328,61 @@ function crud_admin_better_stock_monitor_status_credential_form_page()
             if (isset($id) && isset($pronounceable_names) && isset($api_key)) { ?>
                 <form action="" method="post">
                     <h3>BetterStack API Credential</h3>
-                    <div class="form-group">
-                        <label for="api_key" class="fw-bold">API key:</label>
-                        <input type="text" class="form-control" id="api_key" placeholder="Enter api key" name="api_key"
+                    <div class="betterstack-form-group">
+                        <label for="api_key">API key:</label>
+                        <input type="text" id="api_key" placeholder="Enter api key" name="api_key"
                                value="<?= $api_key ?>">
                     </div>
                     <hr/>
                     <h3>BetterStack Monitor Status Credential</h3>
-                    <div class="form-group">
-                        <label for="pronounceable_names" class="fw-bold">Pronounceable names:</label>
-                        <input type="text" class="form-control" id="pronounceable_names"
+                    <div class="betterstack-form-group">
+                        <label for="pronounceable_names">Pronounceable names:</label>
+                        <input type="text" id="pronounceable_names"
                                placeholder="comma separated pronounceable names eg SaneChoice Website,SaneChoice POP3 etc"
                                name="pronounceable_names" value="<?= $pronounceable_names ?>">
                     </div>
                     <hr/>
                     <h3>BetterStack Incident Report Credential</h3>
-                    <div class="checkbox">
-                        <label class="fw-bold"><input type="checkbox" name="is_call_enabled" <?= $is_call_enabled ?>>
+                    <div class="betterstack-form-group">
+                        <label><input type="checkbox" name="is_call_enabled" <?= $is_call_enabled ?>>
                             Should
                             we call the on-call
                             person?</label>
                     </div>
-                    <div class="checkbox">
-                        <label class="fw-bold"><input type="checkbox" name="is_sms_enabled" <?= $is_sms_enabled ?>>
+                    <div class="betterstack-form-group">
+                        <label><input type="checkbox" name="is_sms_enabled" <?= $is_sms_enabled ?>>
                             Should
                             we send an SMS to the
                             on-call
                             person?</label>
                     </div>
-                    <div class="checkbox">
-                        <label class="fw-bold"><input type="checkbox" name="is_email_enabled" <?= $is_email_enabled ?>>
+                    <div class="betterstack-form-group">
+                        <label><input type="checkbox" name="is_email_enabled" <?= $is_email_enabled ?>>
                             Should we send an email to
                             the on-call
                             person?</label>
                     </div>
-                    <div class="checkbox">
-                        <label class="fw-bold"><input type="checkbox" name="is_push_enabled" <?= $is_push_enabled ?>>
+                    <div class="betterstack-form-group">
+                        <label><input type="checkbox" name="is_push_enabled" <?= $is_push_enabled ?>>
                             Should
                             we send a push
                             notification to the on-call person?</label>
                     </div>
-                    <div class="form-group">
-                        <label for="team_wait" class="fw-bold">How long to wait before escalating the incident:</label>
-                        <input type="number" step="1" class="form-control" id="team_wait"
+                    <div class="betterstack-form-group" style="margin-top: 20px">
+                        <label for="team_wait">How long to wait before escalating the incident:</label>
+                        <input type="number" step="1" id="team_wait"
                                placeholder="Enter waiting time seconds" name="team_wait" value="<?= $team_wait ?>">
                     </div>
-                    <div class="form-group">
-                        <label for="policy_id" class="fw-bold">The ID of the escalation policy:</label>
-                        <input type="text" class="form-control" id="policy_id" placeholder="keep blank to use default"
+                    <div class="betterstack-form-group">
+                        <label for="policy_id">The ID of the escalation policy:</label>
+                        <input type="text" id="policy_id" placeholder="keep blank to use default"
                                name="policy_id" value="<?= $policy_id ?>">
                     </div>
-                    <div class="form-group">
+                    <div class="betterstack-form-group">
                         <input type='hidden' id='uptid' name='uptid' value='<?= $id ?>'>
-                        <button type="submit" id="uptsubmit" name="uptsubmit" class="btn btn-default btn-success">UPDATE
-                        </button>
+                        <input type="submit" id="uptsubmit" name="uptsubmit" value="UPDATE">
                         <a href='admin.php?page=better_stock_monitor_status_credential'>
-                            <button type='button' class="btn btn-primary">CANCEL</button>
+                            <button type='button' class="cancel-button">CANCEL</button>
                         </a>
                     </div>
                 </form>
@@ -318,19 +392,6 @@ function crud_admin_better_stock_monitor_status_credential_form_page()
     </div>
     <?php
 }
-
-function betteruptime_incident_report_enqueue()
-{
-    wp_enqueue_script("jquery");
-
-    wp_register_style('betteruptime_incident_report_style', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css');
-    wp_enqueue_style('betteruptime_incident_report_style');
-
-    wp_register_script('betteruptime_incident_report_script', 'https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js');
-    wp_enqueue_script('betteruptime_incident_report_script');
-}
-
-add_action("admin_enqueue_scripts", "betteruptime_incident_report_enqueue");
 
 function betteruptime_api_request()
 {
