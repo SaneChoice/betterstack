@@ -90,8 +90,8 @@ add_action(
 function add_admin_Better_stock_monitor_status_credential_form_page()
 {
     add_menu_page(
-        "BetterStack Monitor Status Credential",
-        "BetterStack Monitor Status Credential",
+        "BetterStack",
+        "BetterStack",
         "manage_options",
         "better_stock_monitor_status_credential",
         "crud_admin_better_stock_monitor_status_credential_form_page",
@@ -599,8 +599,17 @@ function betteruptime_create_new_incident_ajax()
     global $wpdb;
     $table_name = $wpdb->prefix . "better_stack_monitor_status_credentials";
     $result = $wpdb->get_results("SELECT * FROM $table_name limit 1");
+    $postParameter = [];
     foreach ($result as $print) {
         $api_key = $print->api_key;
+        $postParameter['call'] = $print->is_call_enabled;
+        $postParameter['sms'] = $print->is_sms_enabled;
+        $postParameter['email'] = $print->is_email_enabled;
+        $postParameter['push'] = $print->is_push_enabled;
+        $postParameter['team_wait'] = $print->team_wait;
+        if (!empty($print->policy_id)) {
+            $postParameter['policy_id'] = $print->policy_id;
+        }
     }
 
     if (!isset($api_key)) {
@@ -610,17 +619,10 @@ function betteruptime_create_new_incident_ajax()
 
     $url = "https://uptime.betterstack.com/api/v2/incidents";
 
-    $postParameter = [
-        'requester_email' => $_POST['requester_email'] ?? '',
-        'name' => $_POST['name'] ?? '',
-        'summary' => $_POST['summary'] ?? '',
-        'description' => $_POST['description'] ?? '',
-        'call' => false,
-        'sms' => true,
-        'email' => true,
-        'push' => true,
-        'team_wait' => 60,//will wait 60s
-    ];
+    $postParameter['requester_email'] = $_POST['requester_email'] ?? '';
+    $postParameter['name'] = $_POST['name'] ?? '';
+    $postParameter['summary'] = $_POST['summary'] ?? '';
+    $postParameter['description'] = $_POST['description'] ?? '';
 
     $ch = curl_init();
     curl_setopt($ch, CURLOPT_URL, $url);
