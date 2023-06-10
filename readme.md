@@ -1,4 +1,3 @@
-[![Better Stack Badge](https://uptime.betterstack.com/status-badges/v1/monitor/mjjo.svg)](https://uptime.betterstack.com/?utm_source=status_badge)
 === Better Stack Monitor Status ===
 Contributors: sanechoice, sohel0415
 Version: 1.0
