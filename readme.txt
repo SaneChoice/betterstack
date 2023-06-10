@@ -41,13 +41,13 @@ After installation, add shortcode `[betteruptime_monitor_status]` in any place. 
 == Changelog ==
 
 = 1.0 =
-*Release Date - 03 June 2023*
+Release Date - 03 June 2023
 
 * Initial code to show monitors
 * Setup API and monitors list from admin panel
 
 = 1.1 =
-*Release Date - 10 June 2023*
+Release Date - 10 June 2023
 
 * Tided the Admin Screen
 * Fixed issue with Admin Panel menu item name
