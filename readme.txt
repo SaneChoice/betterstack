@@ -1,12 +1,12 @@
 === Better Stack Monitor Status ===
 Contributors: sanechoice, sohel0415
-Version: 1.0
+Version: 1.1
 Author: SaneChoice Limited
 Author URI: https://www.sanechoice.cloud
-Tags: 1.0
+Tags: 1.1
 Requires at least: 6.0
 Tested up to: 6.2
-Stable tag: 1.0
+Stable tag: 1.1
 Requires PHP: 7.4
 License: GPLv3 or later
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
